@@ -8,5 +8,6 @@ library grizzly_linalg;
 
 export 'src/lstsq.dart';
 export 'src/lu.dart';
+export 'src/norm.dart';
 export 'src/qr.dart';
 export 'src/svd.dart';

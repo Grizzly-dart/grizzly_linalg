@@ -1,3 +1,4 @@
+/// Reference: http://cacs.usc.edu/education/phys516/src/TB/svdcmp.c
 library grizzly.linalg.svd;
 
 import 'dart:math' as math;
