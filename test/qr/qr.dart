@@ -1,4 +1,4 @@
-import 'package:grizzly_series/grizzly_series.dart';
+import 'package:grizzly_array/grizzly_array.dart';
 import 'package:grizzly_linalg/grizzly_linalg.dart';
 import 'package:test/test.dart';
 

@@ -1,4 +1,4 @@
-import 'package:grizzly_series/grizzly_series.dart';
+import 'package:grizzly_array/grizzly_array.dart';
 import 'package:grizzly_linalg/grizzly_linalg.dart';
 import 'package:test/test.dart';
 
@@ -8,25 +8,25 @@ void main() {
 		});
 
 		test('First Test', () {
-			final x = array2D([
-				[1, 2],
-				[2, 3],
-				[3, 4],
-				[4, 5],
-				[5, 6],
+			final x = double2D([
+				[1.0, 2.0],
+				[2.0, 3.0],
+				[3.0, 4.0],
+				[4.0, 5.0],
+				[5.0, 6.0],
 			]);
 			final y = (x * [5, 2]).row.sum + 7;
-			print(y);
+			print(y.asIterable);
 
-			final LU xLU = lu(x);
+			final LU xlu = lu(x);
 
-			print(xLU.pivotMatrix);
+			print(xlu.pivotMatrix);
 
-			print(xLU.lowerFactor);
+			print(xlu.lowerFactor);
 
-			print(xLU.upperFactor);
+			print(xlu.upperFactor);
 
-			print(xLU.pivotMatrix * xLU.lowerFactor * xLU.upperFactor);
+			print(xlu.pivotMatrix * xlu.lowerFactor * xlu.upperFactor);
 		});
 	});
 }

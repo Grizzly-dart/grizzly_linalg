@@ -9,7 +9,9 @@ environment:
   sdk: '>=1.20.1 <2.0.0'
 
 dependencies:
-  grizzly_series: ^0.0.10-dev
+  grizzly_array: # ^0.0.10-dev
+    path:
+      ../grizzly_array
 
 dev_dependencies:
   test: ^0.12.0

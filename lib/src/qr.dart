@@ -1,7 +1,7 @@
 library grizzly.linalg.qr;
 
 import 'dart:math';
-import 'package:grizzly_series/grizzly_series.dart';
+import 'package:grizzly_array/grizzly_array.dart';
 
 QR qr(Numeric2D matrix) => new QR.compute(matrix);
 
@@ -86,7 +86,7 @@ class QR {
     final values = new Double2D.shaped(shape);
 
     for (int i = 0; i < shape.row; i++) {
-      for (int j = 0; j < shape.column; j++) {
+      for (int j = 0; j < shape.col; j++) {
         if (i >= j) {
           values[i][j] = qr[i][j];
         } else {
@@ -100,8 +100,8 @@ class QR {
 
   /// Computes and returns the upper triangular factor R.
   static Double2D upperTriangularFactor(Double2D qr, Double1D rDiag) {
-    final int numCols = qr.shape.column;
-    final values = new Double2D.sized(qr.shape.column, qr.shape.column);
+    final int numCols = qr.shape.col;
+    final values = new Double2D.sized(qr.shape.col, qr.shape.col);
 
     for (int i = 0; i < numCols; i++) {
       for (int j = 0; j < numCols; j++) {
@@ -124,7 +124,7 @@ class QR {
 
     final values = new Double2D.shaped(qr.shape);
 
-    for (int k = shape.column - 1; k >= 0; k--) {
+    for (int k = shape.col - 1; k >= 0; k--) {
       for (int i = 0; i < shape.row; i++) {
         values[i][k] = 0.0;
       }
@@ -133,7 +133,7 @@ class QR {
         values[k][k] = 1.0;
       }
 
-      for (int j = k; j < shape.column; j++) {
+      for (int j = k; j < shape.col; j++) {
         if (k < shape.row && qr[k][k] != 0.0) {
           double s = 0.0;
 
@@ -174,8 +174,8 @@ class QR {
     }
 
     // Copy right hand side
-    final xCols = b.numCols;
-    final xVals = new Double2D(b);
+    final int xCols = b.numCols;
+    final Double2D xVals = new Double2D.copy(b);
 
     // Compute Y = transpose(Q)*B
     for (int k = 0; k < qr.numCols; k++) {

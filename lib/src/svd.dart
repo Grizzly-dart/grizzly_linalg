@@ -2,7 +2,7 @@
 library grizzly.linalg.svd;
 
 import 'dart:math' as math;
-import 'package:grizzly_series/grizzly_series.dart';
+import 'package:grizzly_array/grizzly_array.dart';
 
 class SVD {
   final Double2D u;

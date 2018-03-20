@@ -1,6 +1,6 @@
 library grizzly.linalg.lu;
 
-import 'package:grizzly_series/grizzly_series.dart';
+import 'package:grizzly_array/grizzly_array.dart';
 
 LU lu(Numeric2D matrix) => new LU.compute(matrix);
 
@@ -62,11 +62,11 @@ class LU {
     final piv = new Int1D(new List<int>.generate(numRows, (i) => i));
 
     // Outer loop.
-    for (var j = 0; j < numCols; j++) {
+    for (int j = 0; j < numCols; j++) {
       // Find pivot
       int p = j;
 
-      for (var i = j + 1; i < numRows; i++) {
+      for (int i = j + 1; i < numRows; i++) {
         if (lu[i][j].abs() > lu[p][j].abs()) {
           p = i;
         }
@@ -74,7 +74,7 @@ class LU {
 
       // Exchange pivot if necessary
       if (p != j) {
-        for (var k = 0; k < numCols; k++) {
+        for (int k = 0; k < numCols; k++) {
           final double t = lu[p][k];
           lu[p][k] = lu[j][k];
           lu[j][k] = t;
@@ -89,10 +89,10 @@ class LU {
 
       // Compute multipliers.
       if (j < numRows && lu[j][j] != 0.0) {
-        for (var i = j + 1; i < numRows; i++) {
+        for (int i = j + 1; i < numRows; i++) {
           lu[i][j] /= lu[j][j];
 
-          for (var k = j + 1; k < numCols; k++) {
+          for (int k = j + 1; k < numCols; k++) {
             lu[i][k] -= lu[i][j] * lu[j][k];
           }
         }
@@ -112,7 +112,7 @@ class LU {
       throw new UnsupportedError('Matrix is not square.');
     }
 
-    for (var j = 0; j < lu.numCols; j++) {
+    for (int j = 0; j < lu.numCols; j++) {
       if (lu[j][j] == 0.0) return false;
     }
 
@@ -161,9 +161,9 @@ class LU {
   Double2D get pivotMatrix {
     final values = new Double2D.sized(lu.numRows, lu.numRows);
 
-    for (var i = 0; i < lu.numRows; i++) {
-      for (var j = 0; j < lu.numRows; j++) {
-        if (j == piv[i]) {
+    for (int i = 0; i < lu.numRows; i++) {
+      for (int j = 0; j < lu.numRows; j++) {
+        if (i == piv[j]) {
           values[i][j] = 1.0;
         }
       }
@@ -212,29 +212,29 @@ class LU {
     final xVals = new Double2D.sized(lu.numCols, xCols);
 
     // Copy right hand side with pivoting
-    for (int row in piv) {
+    for (int row in piv.asIterable) {
       for (int i = 0; i < xCols; i++) {
         xVals[row][i] = bVals[row][i];
       }
     }
 
     // Solve L*Y = B(piv,:)
-    for (var k = 0; k < lu.numCols; k++) {
-      for (var i = k + 1; i < lu.numCols; i++) {
-        for (var j = 0; j < xCols; j++) {
+    for (int k = 0; k < lu.numCols; k++) {
+      for (int i = k + 1; i < lu.numCols; i++) {
+        for (int j = 0; j < xCols; j++) {
           xVals[i][j] -= xVals[k][j] * lu[i][k];
         }
       }
     }
 
     // Solve U*X = Y;
-    for (var k = lu.numCols - 1; k >= 0; k--) {
-      for (var j = 0; j < xCols; j++) {
+    for (int k = lu.numCols - 1; k >= 0; k--) {
+      for (int j = 0; j < xCols; j++) {
         xVals[k][j] /= lu[k][k];
       }
 
-      for (var i = 0; i < k; i++) {
-        for (var j = 0; j < xCols; j++) {
+      for (int i = 0; i < k; i++) {
+        for (int j = 0; j < xCols; j++) {
           xVals[i][j] -= xVals[k][j] * lu[i][k];
         }
       }

@@ -1,6 +1,6 @@
 library grizzly.linalg.lstsq;
 
-import 'package:grizzly_series/grizzly_series.dart';
+import 'package:grizzly_array/grizzly_array.dart';
 
 /// Return the least-squares solution to a linear matrix equation
 ///
@@ -64,7 +64,7 @@ abstract class LeastSquareGradientDescent {
   double costFunction() {
     double sumSquaredError = 0.0;
     for (int r = 0; r < x.numRows; r++) {
-      final double prediction = predict(x[r]);
+      final double prediction = predict(x[r].asIterable);
       final double error = y[r] - prediction;
       sumSquaredError += error * error;
     }
@@ -132,10 +132,10 @@ class BatchLeastSquareGradientDescent extends LeastSquareGradientDescent {
   double dj(int j) {
     double sum = 0.0;
     for (int r = 0; r < x.numRows; r++) {
-      final double prediction = predict(x[r]);
+      final double prediction = predict(x[r].asIterable);
       sum += (y[r] - prediction) * x[r][j];
     }
-    return sum / x.length;
+    return sum / x.numCols;
   }
 }
 
@@ -178,7 +178,7 @@ class StochasticLeastSquareGradientDescent extends LeastSquareGradientDescent {
   /// called so much, it needs to be efficient with
   /// comparisons)
   double dij(int i, int j) {
-    final double prediction = predict(x[i]);
+    final double prediction = predict(x[i].asIterable);
     final double gradient = (y[i] - prediction) * x[i][j];
     return gradient;
   }
