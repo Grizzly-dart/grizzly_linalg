@@ -15,8 +15,8 @@ void main() {
 				[4.0, 5.0],
 				[5.0, 6.0],
 			]);
-			final y = (x * [5, 2]).row.sum + 7;
-			print(y.asIterable);
+			final y = x * [5, 2];
+			print(y);
 
 			final LU xlu = lu(x);
 
@@ -27,6 +27,8 @@ void main() {
 			print(xlu.upperFactor);
 
 			print(xlu.pivotMatrix * xlu.lowerFactor * xlu.upperFactor);
+
+			xlu.solve(y);
 		});
 	});
 }

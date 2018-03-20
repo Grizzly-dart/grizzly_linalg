@@ -24,13 +24,8 @@ Double2D solve(Numeric2D a, Numeric2D b) =>
 /// square systems of simultaneous linear equations. This will fail if the
 /// [Matrix] is non-singular. Pivoting reduces the impact of rounding errors.
 class LU {
-  /// The source [Matrix].
-  ///
-  /// The [Matrix] for which this is the [PivotingLUDecomposition].
-  // TODO final Matrix matrix;
-
   /// LU decomposition values.
-  final Double2D lu;
+  Double2DFix lu;
 
   /// The pivot vector.
   ///
@@ -46,14 +41,14 @@ class LU {
   ///     0 0 0 1
   ///     0 1 0 0
   ///
-  final Int1D piv;
+  Int1DFix piv;
 
   /// The pivot sign.
-  final num pivotSign;
+  num pivotSign;
 
   LU(this.lu, this.piv, this.pivotSign);
 
-  /// Creates a new [PivotingLUDecomposition] for the [matrix].
+  /// Creates a new [LU] for the [matrix].
   factory LU.compute(Numeric2D matrix) {
     final lu = new Double2D.fromNum(matrix);
     final int numRows = matrix.numRows;
