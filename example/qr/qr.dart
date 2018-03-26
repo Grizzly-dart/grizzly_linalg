@@ -10,22 +10,29 @@ main() {
     [5],
   ]);
 
-  final y = x.col[0] * 5;
+  print('x');
+  print(x);
+
+  final y = (x * 5) /* TODO  + [1, 1, 1, 1, 1] */;
+  print('y');
   print(y);
 
   final xqr = qr(x);
+  /*
+  print('X: q r');
   print(xqr.q);
   print(xqr.r);
 
-  print(xqr.q.shape);
-  print(xqr.r.shape);
-
+  print('');
   print(xqr.q * xqr.r);
+  */
 
   /*
-  final y2d = new Double2D.columns(y);
+  final y2d = new Double2D.(y);
   print(y.shape);
   print(y2d.shape);
   print(xqr.solve(y2d));
   */
+
+  print(xqr.solve(y));
 }
