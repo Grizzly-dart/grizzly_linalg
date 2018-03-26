@@ -54,7 +54,7 @@ abstract class LeastSquareGradientDescent {
   /// Finds the value of the hypothesis function given the current parameter
   /// vector θ ([params]) and a sample x ([row])
   // TODO normalize argument?
-  double predict(Iterable<num> row) => params.dot(row);
+  double predict(IterView<num> row) => params.dot(row);
 
   /// Performs the learning
   void learn();
@@ -64,7 +64,7 @@ abstract class LeastSquareGradientDescent {
   double costFunction() {
     double sumSquaredError = 0.0;
     for (int r = 0; r < x.numRows; r++) {
-      final double prediction = predict(x[r].asIterable);
+      final double prediction = predict(x[r]);
       final double error = y[r] - prediction;
       sumSquaredError += error * error;
     }
@@ -132,7 +132,7 @@ class BatchLeastSquareGradientDescent extends LeastSquareGradientDescent {
   double dj(int j) {
     double sum = 0.0;
     for (int r = 0; r < x.numRows; r++) {
-      final double prediction = predict(x[r].asIterable);
+      final double prediction = predict(x[r]);
       sum += (y[r] - prediction) * x[r][j];
     }
     return sum / x.numCols;
@@ -178,7 +178,7 @@ class StochasticLeastSquareGradientDescent extends LeastSquareGradientDescent {
   /// called so much, it needs to be efficient with
   /// comparisons)
   double dij(int i, int j) {
-    final double prediction = predict(x[i].asIterable);
+    final double prediction = predict(x[i]);
     final double gradient = (y[i] - prediction) * x[i][j];
     return gradient;
   }

@@ -39,9 +39,12 @@ void main() {
       print(xQR.q);
       print(xQR.r);
 
-      print(xQR.q.dot(xQR.r));
+      print(xQR.q.shape);
+      print(xQR.r.shape);
 
-      print(xQR.solve(y.transpose));
+      // TODO print(xQR.q.dot(xQR.r));
+
+      // TODO print(xQR.solve(y.transpose));
     });
   });
 }
