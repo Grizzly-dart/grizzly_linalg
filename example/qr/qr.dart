@@ -11,11 +11,21 @@ main() {
   ]);
 
   final y = x.col[0] * 5;
+  print(y);
 
-  final xQR = qr(x);
-  print(xQR.q);
-  print(xQR.r);
+  final xqr = qr(x);
+  print(xqr.q);
+  print(xqr.r);
 
-  print(xQR.q.shape);
-  print(xQR.r.shape);
+  print(xqr.q.shape);
+  print(xqr.r.shape);
+
+  print(xqr.q * xqr.r);
+
+  /*
+  final y2d = new Double2D.columns(y);
+  print(y.shape);
+  print(y2d.shape);
+  print(xqr.solve(y2d));
+  */
 }
