@@ -21,8 +21,7 @@ SVD svd(Numeric2DView a) {
   if (m < n) throw new ArgumentError.value(m, 'm', 'Must be >= n!');
 
   Double2D u = new Double2D.fromNum(a);
-  u = u.reshaped(idx2D(m));
-  final s = new Double1D.sized(a.numCols);
+  final s = new Double1D.sized(n);
   final v = new Double2D.sized(n, n);
 
   final rv1 = new Double1D.sized(n);
@@ -31,7 +30,7 @@ SVD svd(Numeric2DView a) {
   double anorm, c, f, g, h, ts, scale, x, y, z;
 
   g = scale = anorm = 0.0;
-// Householder reduction to bidiagonal form
+  // Householder reduction to bidiagonal form
   for (i = 0; i < n; i++) {
     l = i + 1;
     rv1[i] = scale * g;
@@ -215,13 +214,6 @@ SVD svd(Numeric2DView a) {
       rv1[l] = 0.0;
       rv1[k] = f;
       s[k] = x;
-    }
-  }
-
-  for(int i = 0; i < m; i++) {
-    for(int j = 0; j < n; j++) {
-      double temp = u[i][j];
-      // TODO u[i][j] =
     }
   }
 

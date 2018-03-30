@@ -57,18 +57,13 @@ main() {
   Double2D s = xqr.s.diagonal();
   Double2D v = xqr.v;
 
-  /*
-  u.col[2] = new Double1D([0.588348, -0.784465, 0.0, 0.0, 0.196116]);
-  u.col[3] = new Double1D([-0.0620174, -0.186052, 0.0, 0.806226, -0.558156]);
-  u.col[4] =
-      new Double1D([-0.223607, -0.223607, 0.894427, -0.223607, -0.223607]);
-      */
+  v = v.transpose;
 
   print(u);
   print(s);
   print(v);
 
-  // print(u.matmul(s).matmul(v.transpose));
+  print(u.matmul(s).matmul(v));
 
   /*
   print('X: q r');
