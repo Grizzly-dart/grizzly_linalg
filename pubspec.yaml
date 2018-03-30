@@ -13,3 +13,9 @@ dependencies:
 
 dev_dependencies:
   test: ^0.12.0
+
+dependency_overrides:
+  grizzly_array:
+    path: ../grizzly_array
+  grizzly_primitives:
+    path: ../grizzly_primitives

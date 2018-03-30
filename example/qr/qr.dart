@@ -1,19 +1,28 @@
 import 'package:grizzly_array/grizzly_array.dart';
 import 'package:grizzly_linalg/grizzly_linalg.dart';
 
+/// shape(a) = 5 x 2
+/// shape(aT) = 2 x 5
+/// shape(aT * a) = 2 x 2
+///
+/// shape(x) = 2 x 1
+///
+/// shape(b) = 5 x 1
+/// shape(aT * b) = 2 x 1
+
 main() {
   final x = array2D([
-    [1],
-    [2],
-    [3],
-    [4],
-    [5],
+    [1, 1],
+    [1, 2],
+    [1, 3],
+    [1, 4],
+    [1, 5],
   ]);
 
   print('x');
   print(x);
 
-  final y = (x * 5) /* TODO  + [1, 1, 1, 1, 1] */;
+  Double2D y = new Double2D.aCol(x.col[0] + (x.col[1] * 5));
   print('y');
   print(y);
 
