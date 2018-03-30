@@ -26,7 +26,7 @@ SVD svd(Numeric2DView a) {
 
   final rv1 = new Double1D.sized(n);
 
-  int i, its, j, jj, k, l, nm;
+  int flag, i, j, jj, k, l, nm;
   double anorm, c, f, g, h, ts, scale, x, y, z;
 
   g = scale = anorm = 0.0;
@@ -80,11 +80,11 @@ SVD svd(Numeric2DView a) {
     anorm = math.max(anorm, (s[i].abs() + rv1[i].abs()));
   }
 
-// Accumulation of right-hand transformations
+  // Accumulation of right-hand transformations
   for (i = n - 1; i >= 0; i--) {
     if (i < n) {
       if (g != 0) {
-// Double division to avoid possible underflow
+        // Double division to avoid possible underflow
         for (j = l; j < n; j++) v[j][i] = (u[i][j] / u[i][l]) / g;
         for (j = l; j < n; j++) {
           ts = 0.0;
@@ -99,7 +99,7 @@ SVD svd(Numeric2DView a) {
     l = i;
   }
 
-// Accumulation of left-hand transformations
+  // Accumulation of left-hand transformations
   for (i = math.min(m, n) - 1; i >= 0; i--) {
     l = i + 1;
     g = s[i];
@@ -119,19 +119,19 @@ SVD svd(Numeric2DView a) {
   }
 
   for (k = n - 1; k >= 0; k--) {
-/* Diagonalization of the bidiagonal form. */
-    for (its = 1; its <= _numIterations; its++) {
-      bool flag = true;
+    /* Diagonalization of the bidiagonal form. */
+    for (int its = 1; its <= _numIterations; its++) {
+      flag = 1;
       for (l = k; l >= 0; l--) {
-        // Test for splitting.
-        nm = l - 1; // Note that rv1[0] is always zero.
+        /* Test for splitting. */
+        nm = l - 1; /* Note that rv1[1] is always zero. */
         if ((rv1[l].abs() + anorm) == anorm) {
-          flag = false;
+          flag = 0;
           break;
         }
         if (nm >= 0 && (s[nm].abs() + anorm) == anorm) break;
       }
-      if (flag) {
+      if (flag != 0) {
         c = 0.0; /* Cancellation of rv1[l], if l > 1. */
         ts = 1.0;
         for (i = l; i <= k; i++) {
@@ -154,13 +154,11 @@ SVD svd(Numeric2DView a) {
       }
       z = s[k];
       if (l == k) {
-        // Convergence
+        /* Convergence. */
         if (z < 0.0) {
-          // Singular value is made non-negative.
+          /* Singular value is made nonnegative. */
           s[k] = -z;
-          for (j = 0; j < n; j++) {
-            v[j][k] = -v[j][k];
-          }
+          for (j = 0; j < n; j++) v[j][k] = -v[j][k];
         }
         break;
       }
@@ -190,9 +188,9 @@ SVD svd(Numeric2DView a) {
         h = y * ts;
         y *= c;
         for (jj = 0; jj < n; jj++) {
-          x = v[jj][j];
+          if (j >= 0) x = v[jj][j];
           z = v[jj][i];
-          v[jj][j] = x * c + z * ts;
+          if (j >= 0) v[jj][j] = x * c + z * ts;
           v[jj][i] = z * c - x * ts;
         }
         z = _pythag(f, h);

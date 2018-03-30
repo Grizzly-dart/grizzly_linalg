@@ -11,7 +11,7 @@ import 'package:grizzly_linalg/grizzly_linalg.dart';
 /// shape(aT * b) = 2 x 1
 
 main() {
-  final x = array2D([
+  final x = doubles2([
     [1, 1],
     [1, 2],
     [1, 3],

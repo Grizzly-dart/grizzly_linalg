@@ -4,8 +4,7 @@ import 'package:grizzly_array/grizzly_array.dart';
 
 LU lu(Numeric2D matrix) => new LU.compute(matrix);
 
-Double2D solve(Numeric2D a, Numeric2D b) =>
-    new LU.compute(a).solve(b);
+Double2D solve(Numeric2D a, Numeric2D b) => new LU.compute(a).solve(b);
 
 /// The lower-upper factor decomposition of a [Matrix], with partial pivoting.
 ///
@@ -117,7 +116,7 @@ class LU {
   /// This [PivotingLUDecomposition]'s lower factor.
   ///
   /// A [Matrix] with all zero's above the diagonal.
-  Double2D get lowerFactor {
+  Double2D get l {
     final values = new Double2D.shapedLike(lu);
 
     for (int i = 0; i < lu.numRows; i++) {
@@ -136,7 +135,7 @@ class LU {
   /// This [PivotingLUDecomposition]'s upper factor.
   ///
   /// A [Matrix] with all zero's below the diagonal.
-  Double2D get upperFactor {
+  Double2D get u {
     final values = new Double2D.sized(lu.numCols, lu.numCols);
 
     for (int i = 0; i < lu.numCols; i++) {
@@ -153,7 +152,7 @@ class LU {
   /// This [PivotingLUDecomposition]'s pivot matrix.
   ///
   /// A permutation matrix.
-  Double2D get pivotMatrix {
+  Double2D get p {
     final values = new Double2D.sized(lu.numRows, lu.numRows);
 
     for (int i = 0; i < lu.numRows; i++) {
@@ -194,22 +193,19 @@ class LU {
   ///
   /// Throws an [UnsupportedError] if `A` is singular (not invertible).
   Double2D solve(Numeric2D b) {
-    if (b.numRows != lu.numRows) {
+    if (b.numRows != lu.numRows)
       throw new ArgumentError('Matrix row dimensions must agree.');
-    }
 
-    if (!isNonSingular) {
-      throw new UnsupportedError('Matrix is singular.');
-    }
+    if (!isNonSingular) throw new UnsupportedError('Matrix is singular.');
 
-    final bVals = array2D(b);
     final xCols = b.numCols;
-    final xVals = new Double2D.sized(lu.numCols, xCols);
+    final x = new Double2D.sized(lu.numCols, xCols);
 
     // Copy right hand side with pivoting
-    for (int row in piv.asIterable) {
-      for (int i = 0; i < xCols; i++) {
-        xVals[row][i] = bVals[row][i];
+    {
+      int c = 0;
+      for (int row in piv.asIterable) {
+        x[c++] = b[row].toDouble;
       }
     }
 
@@ -217,7 +213,7 @@ class LU {
     for (int k = 0; k < lu.numCols; k++) {
       for (int i = k + 1; i < lu.numCols; i++) {
         for (int j = 0; j < xCols; j++) {
-          xVals[i][j] -= xVals[k][j] * lu[i][k];
+          x[i][j] -= x[k][j] * lu[i][k];
         }
       }
     }
@@ -225,16 +221,16 @@ class LU {
     // Solve U*X = Y;
     for (int k = lu.numCols - 1; k >= 0; k--) {
       for (int j = 0; j < xCols; j++) {
-        xVals[k][j] /= lu[k][k];
+        x[k][j] /= lu[k][k];
       }
 
       for (int i = 0; i < k; i++) {
         for (int j = 0; j < xCols; j++) {
-          xVals[i][j] -= xVals[k][j] * lu[i][k];
+          x[i][j] -= x[k][j] * lu[i][k];
         }
       }
     }
 
-    return xVals;
+    return x;
   }
 }

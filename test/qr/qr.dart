@@ -7,7 +7,7 @@ void main() {
     setUp(() {});
 
     test('QR 0', () {
-      final x = array2D([
+      final x = doubles2([
         [1, 2],
         [2, 3],
         [3, 4],
@@ -25,7 +25,7 @@ void main() {
     });
 
     test('QR 1', () {
-      final x = array2D([
+      final x = doubles2([
         [1],
         [2],
         [3],

@@ -3,32 +3,52 @@ import 'package:grizzly_linalg/grizzly_linalg.dart';
 import 'package:test/test.dart';
 
 void main() {
-	group('A group of tests', () {
-		setUp(() {
-		});
+  group('A group of tests', () {
+    test('Factorize', () {
+      final a = new Double2D([
+        [1.0, 4.0],
+        [2.0, 5.0],
+      ]);
+      final LU xlu = lu(a);
 
-		test('First Test', () {
-			final x = double2D([
-				[1.0, 2.0],
-				[2.0, 3.0],
-				[3.0, 4.0],
-				[4.0, 5.0],
-				[5.0, 6.0],
-			]);
-			final y = x * [5, 2];
-			print(y);
+      expect(
+          xlu.p,
+          new Int2D([
+            [0, 1],
+            [1, 0]
+          ]));
 
-			final LU xlu = lu(x);
+      expect(
+          xlu.l,
+          new Double2D([
+            [1.0, 0.0],
+            [0.5, 1.0],
+          ]));
 
-			print(xlu.pivotMatrix);
+      expect(
+          xlu.u,
+          new Double2D([
+            [2.0, 5.0],
+            [0.0, 1.5]
+          ]));
 
-			print(xlu.lowerFactor);
+      expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
+    });
 
-			print(xlu.upperFactor);
+    test('Solve', () {
+      final a = new Double2D([
+        [1.0, 4.0],
+        [2.0, 5.0],
+      ]);
+      final b = a.matmul(new Double2D.aCol(<int>[5, 2]));
+      final LU xlu = lu(a);
 
-			print(xlu.pivotMatrix * xlu.lowerFactor * xlu.upperFactor);
-
-			xlu.solve(y);
-		});
-	});
+      expect(
+          xlu.solve(b),
+          ints2([
+            [5],
+            [2]
+          ]));
+    });
+  });
 }
