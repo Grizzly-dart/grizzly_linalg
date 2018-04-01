@@ -3,11 +3,9 @@ import 'package:grizzly_linalg/grizzly_linalg.dart';
 
 main() {
   final a = new Double2D([
-    [1.0, 1.0],
     [1.0, 2.0],
-    [1.0, 3.0],
-    [1.0, 4.0],
-    [1.0, 5.0],
+    [2.0, 4.0],
+    [3.0, 6.0]
   ]);
 
   print('A');
@@ -20,6 +18,9 @@ main() {
   print('R');
   print(aqr.r);
 
+  print('Full rank? ${aqr.isFullRank}');
+
+  /*
   print('A = Q * R');
   print(aqr.q.matmul(aqr.r));
 
@@ -29,4 +30,5 @@ main() {
 
   print('x = A^-1 * b');
   print(aqr.solve(b));
+  */
 }

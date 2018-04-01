@@ -1,19 +1,73 @@
-/// Reference: http://cacs.usc.edu/education/phys516/src/TB/svdcmp.c
 library grizzly.linalg.svd;
 
 import 'dart:math' as math;
 import 'package:grizzly_array/grizzly_array.dart';
 
-class SVD {
-  final Double2D u;
-
-  final Double1D s;
-
-  final Double2D v;
-
-  SVD(this.u, this.s, this.v);
+/// Compute the (Moore-Penrose) pseudo-inverse of the matrix [a].
+///
+/// Calculates the generalized inverse of a matrix using its singular-value
+/// decomposition (SVD) and including all large singular values.
+///
+/// [rcond] specifies cutoff for small singular values. Singular values smaller
+/// (in modulus) than rcond * largest_singular_value (again, in modulus) are
+/// set to zero. Broadcasts against the stack of matrices.
+Double2D pinv(Numeric2DView a,
+    {double rcond = 1e-15, ArrayFix<double> singularValues}) {
+  SVD asvd = svd(a);
+  if (singularValues != null) {
+    if (singularValues.length == asvd.s.length ||
+        singularValues is Array<double>) {
+      singularValues.assign = asvd.s;
+    } else {
+      throw new ArgumentError('Cannot assign singularValues!');
+    }
+  }
+  return asvd.pinv(rcond: rcond);
 }
 
+/// Contains the [u], [s] and [v] of a matrix.
+class SVD {
+  final Double2DView u;
+
+  final Double1DView s;
+
+  final Double2DView v;
+
+  SVD(this.u, this.s, this.v);
+
+  /// Compute the (Moore-Penrose) pseudo-inverse of the matrix.
+  ///
+  /// [rcond] specifies cutoff for small singular values. Singular values smaller
+  /// (in modulus) than rcond * largest_singular_value (again, in modulus) are
+  /// set to zero. Broadcasts against the stack of matrices.
+  Double2D pinv({double rcond = 1e-15}) {
+    final Double1D sPinv = new Double1D.shapedLike(s);
+    double cutoff = rcond * s.max;
+    for (int i = 0; i < sPinv.length; i++) {
+      if (s[i] > cutoff)
+        sPinv[i] = 1 / s[i];
+      else
+        sPinv[i] = 0.0;
+    }
+    return v.matmulDiag(sPinv).matmul(u.transpose);
+  }
+
+  Double2D solve(Double2D b, {double rcond = 1e-15}) {
+    if (u.numRows != b.numRows) throw new Exception('Invalid size!');
+    return pinv(rcond: rcond).matmul(b);
+  }
+
+  /// Computes and returns the original matrix [a] from [u], [s] and [v].
+  Double2D get original => u.matmulDiag(s).matmul(v.transpose);
+}
+
+/// Computes Singular Value Decomposition of [a]
+///
+/// [a] is factorized into [u], [s] and [v] such that
+///
+/// `a = u * s * v^T`
+///
+/// Reference: http://cacs.usc.edu/education/phys516/src/TB/svdcmp.c
 SVD svd(Numeric2DView a) {
   final int m = a.numRows;
   final int n = a.numCols;

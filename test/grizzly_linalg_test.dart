@@ -1,15 +1,14 @@
 // Copyright (c) 2017, teja. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
-import 'package:grizzly_linalg/grizzly_linalg.dart';
-import 'package:test/test.dart';
+import 'lu/lu.dart' as luTests;
+import 'qr/qr.dart' as qrTests;
+import 'svd/svd.dart' as svdTests;
 
-void main() {
-  group('A group of tests', () {
-    setUp(() {
-    });
-
-    test('First Test', () {
-    });
-  });
+main() {
+  luTests.main();
+  qrTests.main();
+  svdTests.main();
 }
+
+

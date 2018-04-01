@@ -23,15 +23,15 @@ Double1D lstsqBGD(Numeric2DView x, Numeric1DView y,
         .params;
 
 Double1D lstsqSGD(Numeric2DView x, Numeric1DView y,
-    {double learningRate: 1e-4,
-      int maxIterations: 200,
-      Iterable<double> initParams}) =>
+        {double learningRate: 1e-4,
+        int maxIterations: 200,
+        Iterable<double> initParams}) =>
     (new StochasticLeastSquareGradientDescent(
-        x,
-        y,
-        learningRate: learningRate,
-        maxIterations: maxIterations,
-        initParams: initParams,
+      x,
+      y,
+      learningRate: learningRate,
+      maxIterations: maxIterations,
+      initParams: initParams,
     )..learn())
         .params;
 
@@ -186,8 +186,8 @@ class StochasticLeastSquareGradientDescent extends LeastSquareGradientDescent {
   /// Performs least-square estimation through stochastic gradient descent
   void learn() {
     final theta = new Double1D.sized(params.length);
-    for(int i = 0; i < maxIterations; i++) {
-      for(int i = 0; i < x.numRows; i++) {
+    for (int i = 0; i < maxIterations; i++) {
+      for (int i = 0; i < x.numRows; i++) {
         for (int j = 0; j < params.length; j++) {
           theta[j] = params[j] + learningRate * dij(i, j);
         }

@@ -6,6 +6,8 @@ LU lu(Numeric2D matrix) => new LU.compute(matrix);
 
 Double2D solve(Numeric2D a, Numeric2D b) => new LU.compute(a).solve(b);
 
+double det(Numeric2D a) => new LU.compute(a).determinant;
+
 /// The lower-upper factor decomposition of a [Matrix], with partial pivoting.
 ///
 /// Lower-upper factor decomposition with partial pivoting of an M x N matrix
@@ -101,16 +103,14 @@ class LU {
   /// A non-singular [Matrix] has an inverse and a non-zero determinant.
   ///
   /// Throws an [UnsupportedError] if the decomposed [Matrix] is not square.
-  bool get isNonSingular {
-    if (!lu.isSquare) {
-      throw new UnsupportedError('Matrix is not square.');
-    }
+  bool get isSingular {
+    if (!lu.isSquare) throw new UnsupportedError('Matrix is not square.');
 
     for (int j = 0; j < lu.numCols; j++) {
-      if (lu[j][j] == 0.0) return false;
+      if (lu[j][j] == 0.0) return true;
     }
 
-    return true;
+    return false;
   }
 
   /// This [PivotingLUDecomposition]'s lower factor.
@@ -170,15 +170,11 @@ class LU {
   ///
   /// Throws an [UnsupportedError] if the decomposed [Matrix] is not square.
   double get determinant {
-    if (!lu.isSquare) {
-      throw new UnsupportedError('Matrix must be square.');
-    }
+    if (!lu.isSquare) throw new UnsupportedError('Matrix must be square.');
 
     double determinant = pivotSign.toDouble();
 
-    for (int j = 0; j < lu.numCols; j++) {
-      determinant *= lu[j][j];
-    }
+    for (int j = 0; j < lu.numCols; j++) determinant *= lu[j][j];
 
     return determinant;
   }
@@ -196,7 +192,7 @@ class LU {
     if (b.numRows != lu.numRows)
       throw new ArgumentError('Matrix row dimensions must agree.');
 
-    if (!isNonSingular) throw new UnsupportedError('Matrix is singular.');
+    if (isSingular) throw new UnsupportedError('Matrix is singular.');
 
     final xCols = b.numCols;
     final x = new Double2D.sized(lu.numCols, xCols);

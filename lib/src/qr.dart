@@ -25,7 +25,63 @@ class QR {
 
   final Double2D r;
 
-  QR(this.qr, this.rDiag): q = QR.orthogonalFactor(qr), r = QR.upperTriangularFactor(qr, rDiag);
+  QR(this.qr, this.rDiag)
+      : q = QR.orthogonalFactor(qr),
+        r = QR.upperTriangularFactor(qr, rDiag);
+
+  /// Whether or not the decomposed [Matrix] is full rank.
+  bool get isFullRank {
+    for (int j = 0; j < qr.numCols; j++) {
+      if (rDiag[j].abs() < 0.00001) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  Double2D solve(Double2D b) {
+    if (b.numRows != qr.numRows)
+      throw new ArgumentError('Matrix row dimensions must agree.');
+
+    if (!isFullRank) throw new UnsupportedError('Matrix is rank deficient.');
+
+    // Copy right hand side
+    final int xCols = b.numCols;
+    final Double2D x = new Double2D.copy(b);
+
+    // Compute Y = transpose(Q)*B
+    for (int k = 0; k < qr.numCols; k++) {
+      for (int j = 0; j < xCols; j++) {
+        double s = 0.0;
+
+        for (int i = k; i < qr.numRows; i++) {
+          s += qr[i][k] * x[i][j];
+        }
+
+        s = -s / qr[k][k];
+
+        for (int i = k; i < qr.numRows; i++) {
+          x[i][j] += s * qr[i][k];
+        }
+      }
+    }
+
+    // Solve R*X = Y;
+    for (int k = qr.numCols - 1; k >= 0; k--) {
+      for (int j = 0; j < xCols; j++) {
+        x[k][j] /= rDiag[k];
+      }
+
+      for (int i = 0; i < k; i++) {
+        for (int j = 0; j < xCols; j++) {
+          x[i][j] -= x[k][j] * qr[i][k];
+        }
+      }
+    }
+
+    return x.slice(idx2D(0, 0), idx2D(qr.numCols, xCols));
+  }
 
   /// Creates a new [ReducedQRDecomposition] for the [matrix].
   factory QR.compute(Numeric2D matrix) {
@@ -151,62 +207,5 @@ class QR {
     }
 
     return values;
-  }
-
-  /// Whether or not the decomposed [Matrix] is full rank.
-  bool get isFullRank {
-    for (int j = 0; j < qr.numCols; j++) {
-      if (rDiag[j].abs() < 0.00001) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  Double2D solve(Double2D b) {
-    if (b.numRows != qr.numRows) {
-      throw new ArgumentError('Matrix row dimensions must agree.');
-    }
-
-    if (!isFullRank) {
-      throw new UnsupportedError('Matrix is rank deficient.');
-    }
-
-    // Copy right hand side
-    final int xCols = b.numCols;
-    final Double2D xVals = new Double2D.copy(b);
-
-    // Compute Y = transpose(Q)*B
-    for (int k = 0; k < qr.numCols; k++) {
-      for (int j = 0; j < xCols; j++) {
-        double s = 0.0;
-
-        for (int i = k; i < qr.numRows; i++) {
-          s += qr[i][k] * xVals[i][j];
-        }
-
-        s = -s / qr[k][k];
-
-        for (int i = k; i < qr.numRows; i++) {
-          xVals[i][j] += s * qr[i][k];
-        }
-      }
-    }
-
-    // Solve R*X = Y;
-    for (int k = qr.numCols - 1; k >= 0; k--) {
-      for (int j = 0; j < xCols; j++) {
-        xVals[k][j] /= rDiag[k];
-      }
-
-      for (int i = 0; i < k; i++) {
-        for (int j = 0; j < xCols; j++) {
-          xVals[i][j] -= xVals[k][j] * qr[i][k];
-        }
-      }
-    }
-
-    return xVals.slice(idx2D(0, 0), idx2D(qr.numCols, xCols));
   }
 }
