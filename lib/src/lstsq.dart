@@ -1,6 +1,6 @@
 library grizzly.linalg.lstsq;
 
-import 'package:grizzly_series/grizzly_series.dart';
+import 'package:grizzly_array/grizzly_array.dart';
 
 /// Return the least-squares solution to a linear matrix equation
 ///
@@ -23,15 +23,15 @@ Double1D lstsqBGD(Numeric2DView x, Numeric1DView y,
         .params;
 
 Double1D lstsqSGD(Numeric2DView x, Numeric1DView y,
-    {double learningRate: 1e-4,
-      int maxIterations: 200,
-      Iterable<double> initParams}) =>
+        {double learningRate: 1e-4,
+        int maxIterations: 200,
+        Iterable<double> initParams}) =>
     (new StochasticLeastSquareGradientDescent(
-        x,
-        y,
-        learningRate: learningRate,
-        maxIterations: maxIterations,
-        initParams: initParams,
+      x,
+      y,
+      learningRate: learningRate,
+      maxIterations: maxIterations,
+      initParams: initParams,
     )..learn())
         .params;
 
@@ -54,7 +54,7 @@ abstract class LeastSquareGradientDescent {
   /// Finds the value of the hypothesis function given the current parameter
   /// vector θ ([params]) and a sample x ([row])
   // TODO normalize argument?
-  double predict(Iterable<num> row) => params.dot(row);
+  double predict(IterView<num> row) => params.dot(row);
 
   /// Performs the learning
   void learn();
@@ -135,7 +135,7 @@ class BatchLeastSquareGradientDescent extends LeastSquareGradientDescent {
       final double prediction = predict(x[r]);
       sum += (y[r] - prediction) * x[r][j];
     }
-    return sum / x.length;
+    return sum / x.numCols;
   }
 }
 
@@ -186,8 +186,8 @@ class StochasticLeastSquareGradientDescent extends LeastSquareGradientDescent {
   /// Performs least-square estimation through stochastic gradient descent
   void learn() {
     final theta = new Double1D.sized(params.length);
-    for(int i = 0; i < maxIterations; i++) {
-      for(int i = 0; i < x.numRows; i++) {
+    for (int i = 0; i < maxIterations; i++) {
+      for (int i = 0; i < x.numRows; i++) {
         for (int j = 0; j < params.length; j++) {
           theta[j] = params[j] + learningRate * dij(i, j);
         }
