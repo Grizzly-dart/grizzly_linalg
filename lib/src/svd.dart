@@ -83,7 +83,7 @@ SVD svd(Numeric2DView a) {
 
   if (m < n) throw new ArgumentError.value(m, 'm', 'Must be >= n!');
 
-  Double2D u = new Double2D.fromNum(a);
+  Double2D u = new Double2D.fromNums(a);
   final s = new Double1D.sized(n);
   final v = new Double2D.sized(n, n);
 
