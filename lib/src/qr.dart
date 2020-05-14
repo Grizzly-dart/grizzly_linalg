@@ -48,7 +48,7 @@ class QR {
 
     // Copy right hand side
     final int xCols = b.numCols;
-    final Double2D x = new Double2D.copy(b);
+    final Double2D x = new Double2D(b);
 
     // Compute Y = transpose(Q)*B
     for (int k = 0; k < qr.numCols; k++) {
@@ -85,7 +85,7 @@ class QR {
 
   /// Creates a new [ReducedQRDecomposition] for the [matrix].
   factory QR.compute(Numeric2D matrix) {
-    final qr = new Double2D.fromNum(matrix);
+    final qr = new Double2D.fromNums(matrix);
     final rDiag = new Double1D.sized(matrix.numCols);
 
     final int numRows = matrix.numRows;

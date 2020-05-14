@@ -51,7 +51,7 @@ class LU {
 
   /// Creates a new [LU] for the [matrix].
   factory LU.compute(Numeric2D matrix) {
-    final lu = new Double2D.fromNum(matrix);
+    final lu = new Double2D.fromNums(matrix);
     final int numRows = matrix.numRows;
     final int numCols = matrix.numCols;
     int pivotSign = 1;
@@ -200,8 +200,8 @@ class LU {
     // Copy right hand side with pivoting
     {
       int c = 0;
-      for (int row in piv.asIterable) {
-        x[c++] = b[row].toDouble;
+      for (int row in piv) {
+        x[c++] = b[row].toDouble();
       }
     }
 

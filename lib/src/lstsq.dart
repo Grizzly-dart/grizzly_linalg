@@ -54,7 +54,7 @@ abstract class LeastSquareGradientDescent {
   /// Finds the value of the hypothesis function given the current parameter
   /// vector θ ([params]) and a sample x ([row])
   // TODO normalize argument?
-  double predict(IterView<num> row) => params.dot(row);
+  double predict(Iterable<num> row) => params.dot(row);
 
   /// Performs the learning
   void learn();

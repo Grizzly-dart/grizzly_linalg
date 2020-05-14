@@ -59,6 +59,15 @@ class SVD {
 
   /// Computes and returns the original matrix [a] from [u], [s] and [v].
   Double2D get original => u.matmulDiag(s).matmul(v.transpose);
+
+  int rank({double rcond = 1e-15}) {
+    final double cutoff = rcond * s.max;
+    int ret = 0;
+    for (int i = 0; i < s.length; i++) {
+      if (s[i] > cutoff) ret++;
+    }
+    return ret;
+  }
 }
 
 /// Computes Singular Value Decomposition of [a]
@@ -74,7 +83,7 @@ SVD svd(Numeric2DView a) {
 
   if (m < n) throw new ArgumentError.value(m, 'm', 'Must be >= n!');
 
-  Double2D u = new Double2D.fromNum(a);
+  Double2D u = new Double2D.fromNums(a);
   final s = new Double1D.sized(n);
   final v = new Double2D.sized(n, n);
 
