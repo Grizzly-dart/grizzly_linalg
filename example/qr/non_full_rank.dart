@@ -1,12 +1,12 @@
-import 'package:grizzly_array/grizzly_array.dart';
+import 'package:grizzly/grizzly.dart';
 import 'package:grizzly_linalg/grizzly_linalg.dart';
 
 main() {
-  final a = new Double2D([
+  final a = [
     [1.0, 2.0],
     [2.0, 4.0],
     [3.0, 6.0]
-  ]);
+  ];
 
   print('A');
   print(a);
@@ -24,7 +24,7 @@ main() {
   print('A = Q * R');
   print(aqr.q.matmul(aqr.r));
 
-  Double2D b = new Double2D.aCol(a.col[0] + (a.col[1] * 5));
+  Double2D b = Double2D.aCol(a.col[0] + (a.col[1] * 5));
   print('B');
   print(b);
 

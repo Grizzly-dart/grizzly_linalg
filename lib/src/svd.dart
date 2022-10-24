@@ -1,7 +1,7 @@
 library grizzly.linalg.svd;
 
 import 'dart:math' as math;
-import 'package:grizzly_array/grizzly_array.dart';
+import 'package:grizzly/grizzly.dart';
 
 /// Compute the (Moore-Penrose) pseudo-inverse of the matrix [a].
 ///
@@ -11,15 +11,13 @@ import 'package:grizzly_array/grizzly_array.dart';
 /// [rcond] specifies cutoff for small singular values. Singular values smaller
 /// (in modulus) than rcond * largest_singular_value (again, in modulus) are
 /// set to zero. Broadcasts against the stack of matrices.
-Double2D pinv(Numeric2DView a,
-    {double rcond = 1e-15, ArrayFix<double> singularValues}) {
+Double2D pinv(Num2D a, {double rcond = 1e-15, Double1D? singularValues}) {
   SVD asvd = svd(a);
   if (singularValues != null) {
-    if (singularValues.length == asvd.s.length ||
-        singularValues is Array<double>) {
+    if (singularValues.length == asvd.s.length) {
       singularValues.assign = asvd.s;
     } else {
-      throw new ArgumentError('Cannot assign singularValues!');
+      throw ArgumentError('Cannot assign singularValues!');
     }
   }
   return asvd.pinv(rcond: rcond);
@@ -27,11 +25,11 @@ Double2D pinv(Numeric2DView a,
 
 /// Contains the [u], [s] and [v] of a matrix.
 class SVD {
-  final Double2DView u;
+  final Double2D u;
 
-  final Double1DView s;
+  final Double1D s;
 
-  final Double2DView v;
+  final Double2D v;
 
   SVD(this.u, this.s, this.v);
 
@@ -41,7 +39,7 @@ class SVD {
   /// (in modulus) than rcond * largest_singular_value (again, in modulus) are
   /// set to zero. Broadcasts against the stack of matrices.
   Double2D pinv({double rcond = 1e-15}) {
-    final Double1D sPinv = new Double1D.shapedLike(s);
+    final Double1D sPinv = s.shaped(0.0);
     double cutoff = rcond * s.max;
     for (int i = 0; i < sPinv.length; i++) {
       if (s[i] > cutoff)
@@ -53,7 +51,7 @@ class SVD {
   }
 
   Double2D solve(Double2D b, {double rcond = 1e-15}) {
-    if (u.numRows != b.numRows) throw new Exception('Invalid size!');
+    if (u.numRows != b.numRows) throw Exception('Invalid size!');
     return pinv(rcond: rcond).matmul(b);
   }
 
@@ -77,19 +75,19 @@ class SVD {
 /// `a = u * s * v^T`
 ///
 /// Reference: http://cacs.usc.edu/education/phys516/src/TB/svdcmp.c
-SVD svd(Numeric2DView a) {
+SVD svd(Num2D a) {
   final int m = a.numRows;
   final int n = a.numCols;
 
-  if (m < n) throw new ArgumentError.value(m, 'm', 'Must be >= n!');
+  if (m < n) throw ArgumentError.value(m, 'm', 'Must be >= n!');
 
-  Double2D u = new Double2D.fromNums(a);
-  final s = new Double1D.sized(n);
-  final v = new Double2D.sized(n, n);
+  Double2D u = a.toDouble();
+  final s = Double1D.filled(n, 0);
+  final v = Double.filled2D(n, n);
 
-  final rv1 = new Double1D.sized(n);
+  final rv1 = Double1D.filled(n, 0);
 
-  int flag, i, j, jj, k, l, nm;
+  int flag, i, j, jj, k, l = 0, nm = 0;
   double anorm, c, f, g, h, ts, scale, x, y, z;
 
   g = scale = anorm = 0.0;
@@ -226,7 +224,7 @@ SVD svd(Numeric2DView a) {
         break;
       }
       if (its == _numIterations)
-        throw new Exception("no convergence in 30 svdcmp iterations");
+        throw Exception("no convergence in 30 svdcmp iterations");
       x = s[l]; /* Shift from bottom 2-by-2 minor. */
       nm = k - 1;
       y = nm >= 0 ? s[nm] : 0.0;
@@ -278,7 +276,7 @@ SVD svd(Numeric2DView a) {
     }
   }
 
-  return new SVD(u, s, v);
+  return SVD(u, s, v);
 }
 
 double _copySign(double a, double b) => b >= 0.0 ? a.abs() : -a.abs();

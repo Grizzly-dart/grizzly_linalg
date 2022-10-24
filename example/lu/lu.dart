@@ -1,13 +1,13 @@
-import 'package:grizzly_array/grizzly_array.dart';
+import 'package:grizzly/grizzly.dart';
 import 'package:grizzly_linalg/grizzly_linalg.dart';
 
 main() {
-  final a = new Double2D([
+  final a = [
     [1.0, 4.0],
     [2.0, 5.0],
-  ]);
+  ];
 
-  final b = a.matmul(new Double2D.aCol(<int>[5, 2]));
+  final b = a.matmul([5, 2].toCol());
   print(b);
 
   final LU xlu = lu(a);

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0
+
++ Ported to grizzly 1.0.0
+
 ## 0.1.1-dev
 
 + SVD

@@ -1,6 +1,6 @@
 library grizzly.linalg.lstsq;
 
-import 'package:grizzly_array/grizzly_array.dart';
+import 'package:grizzly/grizzly.dart';
 
 /// Return the least-squares solution to a linear matrix equation
 ///
@@ -9,11 +9,11 @@ import 'package:grizzly_array/grizzly_array.dart';
 /// over- determined (i.e., the number of linearly independent rows of a can be
 /// less than, equal to, or greater than its number of linearly independent
 /// columns).
-Double1D lstsqBGD(Numeric2DView x, Numeric1DView y,
+List<double> lstsqBGD(List<List<num>> x, List<num> y,
         {double learningRate: 1e-4,
         int maxIterations: 200,
-        Iterable<double> initParams}) =>
-    (new BatchLeastSquareGradientDescent(
+        List<double>? initParams}) =>
+    (BatchLeastSquareGradientDescent(
       x,
       y,
       learningRate: learningRate,
@@ -22,11 +22,11 @@ Double1D lstsqBGD(Numeric2DView x, Numeric1DView y,
     )..learn())
         .params;
 
-Double1D lstsqSGD(Numeric2DView x, Numeric1DView y,
+List<double> lstsqSGD(List<List<num>> x, List<num> y,
         {double learningRate: 1e-4,
         int maxIterations: 200,
-        Iterable<double> initParams}) =>
-    (new StochasticLeastSquareGradientDescent(
+        List<double>? initParams}) =>
+    (StochasticLeastSquareGradientDescent(
       x,
       y,
       learningRate: learningRate,
@@ -43,13 +43,13 @@ abstract class LeastSquareGradientDescent {
   int get maxIterations;
 
   /// (N, 1) parameters being estimated
-  Double1DFix get params;
+  List<double> get params;
 
   /// (M, N) exogenous or independent matrix
-  Numeric2DView get x;
+  List<List<num>> get x;
 
   /// (M, 1) endogenous of dependent matrix
-  Numeric1DView get y;
+  List<num> get y;
 
   /// Finds the value of the hypothesis function given the current parameter
   /// vector θ ([params]) and a sample x ([row])
@@ -80,33 +80,33 @@ class BatchLeastSquareGradientDescent extends LeastSquareGradientDescent {
   final int maxIterations;
 
   /// (N, 1) parameters being estimated
-  final Double1DFix params;
+  final List<double> params;
 
   /// (M, N) exogenous or independent matrix
-  final Numeric2DView x;
+  final List<List<num>> x;
 
   /// (M, 1) endogenous of dependent matrix
-  final Numeric1DView y;
+  final List<num> y;
 
   BatchLeastSquareGradientDescent(this.x, this.y,
       {this.learningRate: 1e-4,
       this.maxIterations: 200,
-      Iterable<double> initParams})
+      List<double>? initParams})
       : params = initParams == null
-            ? new Double1DFix.sized(x.numCols)
-            : new Double1DFix(initParams) {
+            ? List<double>.filled(x.numCols, 0)
+            : initParams {
     // Validate
     if (x.numRows != y.length) {
-      throw new Exception('x and y must have same number of samples!');
+      throw Exception('x and y must have same number of samples!');
     }
     if (x.numCols != params.length) {
-      throw new Exception('x and params must have same number of features!');
+      throw Exception('x and params must have same number of features!');
     }
   }
 
   /// Performs least-square estimation through batch gradient descent
   void learn() {
-    final theta = new Double1D.sized(params.length);
+    final theta = List<double>.filled(params.length, 0);
     for (int i = 0; i < maxIterations; i++) {
       for (int j = 0; j < params.length; j++) {
         theta[j] = params[j] + learningRate * dj(j);
@@ -117,7 +117,7 @@ class BatchLeastSquareGradientDescent extends LeastSquareGradientDescent {
         final double newThetaJ = theta[j];
 
         if (newThetaJ.isInfinite || newThetaJ.isNaN) {
-          throw new Exception('Learning diverged!');
+          throw Exception('Learning diverged!');
         }
 
         params[j] = newThetaJ;
@@ -146,25 +146,25 @@ class StochasticLeastSquareGradientDescent extends LeastSquareGradientDescent {
   /// Maximum iterations
   final int maxIterations;
 
-  final Double1DFix params;
+  final List<double> params;
 
-  final Numeric2DView x;
+  final List<List<num>> x;
 
-  final Numeric1DView y;
+  final List<num> y;
 
   StochasticLeastSquareGradientDescent(this.x, this.y,
       {this.learningRate: 1e-4,
       this.maxIterations: 800,
-      Iterable<double> initParams})
+      List<double>? initParams})
       : params = initParams == null
-            ? new Double1DFix.sized(x.numCols)
-            : new Double1DFix(initParams) {
+            ? List<double>.filled(x.numCols, 0)
+            : initParams {
     // Validate
     if (x.numRows != y.length) {
-      throw new Exception('x and y must have same number of samples!');
+      throw Exception('x and y must have same number of samples!');
     }
     if (x.numCols != params.length) {
-      throw new Exception('x and params must have same number of features!');
+      throw Exception('x and params must have same number of features!');
     }
   }
 
@@ -185,7 +185,7 @@ class StochasticLeastSquareGradientDescent extends LeastSquareGradientDescent {
 
   /// Performs least-square estimation through stochastic gradient descent
   void learn() {
-    final theta = new Double1D.sized(params.length);
+    final theta = List<double>.filled(params.length, 0);
     for (int i = 0; i < maxIterations; i++) {
       for (int i = 0; i < x.numRows; i++) {
         for (int j = 0; j < params.length; j++) {
@@ -197,7 +197,7 @@ class StochasticLeastSquareGradientDescent extends LeastSquareGradientDescent {
           final double newThetaJ = theta[j];
 
           if (newThetaJ.isInfinite || newThetaJ.isNaN) {
-            throw new Exception('Learning diverged!');
+            throw Exception('Learning diverged!');
           }
 
           params[j] = newThetaJ;

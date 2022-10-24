@@ -1,4 +1,4 @@
-import 'package:grizzly_array/grizzly_array.dart';
+import 'package:grizzly/grizzly.dart';
 import 'package:grizzly_linalg/grizzly_linalg.dart';
 import 'package:test/test.dart';
 
@@ -7,10 +7,10 @@ void main() {
     group('Singularity', () {
       group('NonSingular', () {
         test('1', () {
-          final a = new Double2D([
+          final a = [
             [1.0, 0.0],
             [0.0, 1.0]
-          ]);
+          ];
           final LU xlu = lu(a);
 
           expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
@@ -18,10 +18,10 @@ void main() {
         });
 
         test('2', () {
-          final a = new Double2D([
+          final a = [
             [0.0, 1.0],
             [1.0, 0.0],
-          ]);
+          ];
           final LU xlu = lu(a);
 
           expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
@@ -29,10 +29,10 @@ void main() {
         });
 
         test('3', () {
-          final a = new Double2D([
+          final a = [
             [1.0, 1.0],
             [0.0, 1.0]
-          ]);
+          ];
           final LU xlu = lu(a);
 
           expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
@@ -40,10 +40,10 @@ void main() {
         });
 
         test('4', () {
-          final a = new Double2D([
+          final a = [
             [0.0, 1.0],
             [1.0, 1.0]
-          ]);
+          ];
           final LU xlu = lu(a);
 
           expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
@@ -51,10 +51,10 @@ void main() {
         });
 
         test('5', () {
-          final a = new Double2D([
+          final a = [
             [1.0, 0.0],
             [1.0, 1.0]
-          ]);
+          ];
           final LU xlu = lu(a);
 
           expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
@@ -62,10 +62,10 @@ void main() {
         });
 
         test('6', () {
-          final a = new Double2D([
+          final a = [
             [1.0, 1.0],
             [1.0, 0.0]
-          ]);
+          ];
           final LU xlu = lu(a);
 
           expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
@@ -75,10 +75,10 @@ void main() {
 
       group('Singular', () {
         test('0', () {
-          final a = new Double2D([
+          final a = [
             [0.0, 0.0],
             [0.0, 0.0]
-          ]);
+          ];
           final LU xlu = lu(a);
 
           expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
@@ -86,10 +86,10 @@ void main() {
         });
 
         test('1', () {
-          final a = new Double2D([
+          final a = [
             [1.0, 0.0],
             [0.0, 0.0]
-          ]);
+          ];
           final LU xlu = lu(a);
 
           expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
@@ -97,10 +97,10 @@ void main() {
         });
 
         test('2', () {
-          final a = new Double2D([
+          final a = [
             [0.0, 1.0],
             [0.0, 0.0]
-          ]);
+          ];
           final LU xlu = lu(a);
 
           expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
@@ -108,10 +108,10 @@ void main() {
         });
 
         test('3', () {
-          final a = new Double2D([
+          final a = [
             [0.0, 0.0],
             [0.0, 1.0]
-          ]);
+          ];
           final LU xlu = lu(a);
 
           expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
@@ -119,10 +119,10 @@ void main() {
         });
 
         test('4', () {
-          final a = new Double2D([
+          final a = [
             [0.0, 0.0],
             [1.0, 0.0]
-          ]);
+          ];
           final LU xlu = lu(a);
 
           expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
@@ -130,10 +130,10 @@ void main() {
         });
 
         test('5', () {
-          final a = new Double2D([
+          final a = [
             [1.0, 1.0],
             [0.0, 0.0]
-          ]);
+          ];
           final LU xlu = lu(a);
 
           expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
@@ -141,10 +141,10 @@ void main() {
         });
 
         test('6', () {
-          final a = new Double2D([
+          final a = [
             [0.0, 1.0],
             [0.0, 1.0]
-          ]);
+          ];
           final LU xlu = lu(a);
 
           expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
@@ -152,10 +152,10 @@ void main() {
         });
 
         test('7', () {
-          final a = new Double2D([
+          final a = [
             [0.0, 0.0],
             [1.0, 1.0]
-          ]);
+          ];
           final LU xlu = lu(a);
 
           expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
@@ -163,10 +163,10 @@ void main() {
         });
 
         test('8', () {
-          final a = new Double2D([
+          final a = [
             [1.0, 0.0],
             [1.0, 0.0]
-          ]);
+          ];
           final LU xlu = lu(a);
 
           expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
@@ -174,10 +174,10 @@ void main() {
         });
 
         test('9', () {
-          final a = new Double2D([
+          final a = [
             [1.0, 1.0],
             [1.0, 1.0]
-          ]);
+          ];
           final LU xlu = lu(a);
 
           expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
@@ -188,43 +188,41 @@ void main() {
 
     group('Factorization', () {
       test('0', () {
-        final a = new Double2D([
+        final a = [
           [1.0, 4.0],
           [2.0, 5.0],
-        ]);
+        ];
         final LU xlu = lu(a);
 
-        expect(
-            xlu.p,
-            new Int2D([
-              [0, 1],
-              [1, 0]
-            ]));
+        expect(xlu.p, [
+          [0, 1],
+          [1, 0]
+        ]);
 
         expect(
             xlu.l,
-            new Double2D([
+            [
               [1.0, 0.0],
               [0.5, 1.0],
-            ]));
+            ]);
 
         expect(
             xlu.u,
-            new Double2D([
+            [
               [2.0, 5.0],
               [0.0, 1.5]
-            ]));
+            ]);
 
         expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
         expect(xlu.isSingular, false);
       });
 
       test('1', () {
-        final a = new Double2D([
+        final a = [
           [6.0, 1.0],
           [4.0, -2.0],
           [2.0, 8.0]
-        ]);
+        ];
         final LU xlu = lu(a);
 
         expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
@@ -232,10 +230,10 @@ void main() {
       });
 
       test('2', () {
-        final a = new Double2D([
+        final a = [
           [4.0, 3.0],
           [6.0, 3.0]
-        ]);
+        ];
         final LU xlu = lu(a);
 
         expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
@@ -243,11 +241,11 @@ void main() {
       });
 
       test('3', () {
-        final a = new Double2D([
+        final a = [
           [1.0, 2.0, 4.0],
           [3.0, 8.0, 14.0],
           [2.0, 6.0, 13.0]
-        ]);
+        ];
         final LU xlu = lu(a);
 
         expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
@@ -255,12 +253,12 @@ void main() {
       });
 
       test('4', () {
-        final a = new Double2D([
+        final a = [
           [2.0, 5.0, 3.0, 5.0],
           [4.0, 6.0, 6.0, 3.0],
           [11.0, 3.0, 2.0, -2.0],
           [4.0, -7.0, 9.0, 3.0]
-        ]);
+        ];
         final LU xlu = lu(a);
 
         expect(xlu.p.matmul(xlu.l).matmul(xlu.u).isClose(a), isTrue);
@@ -270,11 +268,11 @@ void main() {
 
     group(('Determinant'), () {
       test('NotSquare', () {
-        final a = new Double2D([
+        final a = [
           [6.0, 1.0],
           [4.0, -2.0],
           [2.0, 8.0]
-        ]);
+        ];
         final LU xlu = lu(a);
 
         expect(xlu.p.matmul(xlu.l).matmul(xlu.u), a);
@@ -282,10 +280,10 @@ void main() {
       });
 
       test('0', () {
-        final a = new Double2D([
+        final a = [
           [3.0, 8.0],
           [4.0, 6.0]
-        ]);
+        ];
         final LU xlu = lu(a);
 
         expect(xlu.p.matmul(xlu.l).matmul(xlu.u).isClose(a), isTrue);
@@ -293,11 +291,11 @@ void main() {
       });
 
       test('1', () {
-        final a = new Double2D([
+        final a = [
           [6.0, 1.0, 1.0],
           [4.0, -2.0, 5.0],
           [2.0, 8.0, 7.0]
-        ]);
+        ];
         final LU xlu = lu(a);
 
         expect(xlu.p.matmul(xlu.l).matmul(xlu.u).isClose(a), isTrue);
@@ -305,12 +303,12 @@ void main() {
       });
 
       test('2', () {
-        final a = new Double2D([
+        final a = [
           [2.0, 5.0, 3.0, 5.0],
           [4.0, 6.0, 6.0, 3.0],
           [11.0, 3.0, 2.0, -2.0],
           [4.0, -7.0, 9.0, 3.0]
-        ]);
+        ];
         final LU xlu = lu(a);
 
         expect(xlu.p.matmul(xlu.l).matmul(xlu.u).isClose(a), isTrue);
@@ -320,57 +318,57 @@ void main() {
 
     group('Solve', () {
       test('SizeMismatch', () {
-        final a = new Double2D([
+        final a = [
           [2.0, 1.0],
           [0.0, -1.0],
           [-2.0, 3.0],
           [-1.0, 0.0]
-        ]);
-        final b = new Double2D([
+        ];
+        final b = [
           [0.0, 1.0, 11.0],
           [2.0, -1.0, -5.0],
           [-8.0, 3.0, 9.0]
-        ]);
+        ];
         final LU xlu = lu(a);
 
         expect(() => xlu.solve(b), throwsArgumentError);
       });
 
       test('Singular', () {
-        final a = new Double2D([
+        final a = [
           [0.0, 0.0],
           [0.0, 1.0]
-        ]);
-        final b = new Double2D([
+        ];
+        final b = [
           [0.0, 1.0, 11.0],
           [2.0, -1.0, -5.0]
-        ]);
+        ];
         final LU xlu = lu(a);
 
         expect(() => xlu.solve(b), throwsUnsupportedError);
       });
 
       test('Identity', () {
-        final a = new Double2D([
+        final a = [
           [6.0, 1.0, 1.0],
           [4.0, -2.0, 5.0],
           [2.0, 8.0, 7.0]
-        ]);
+        ];
         final LU xlu = lu(a);
         Double2D solution = xlu.solve(a);
 
-        expect(solution, doubles([1, 1, 1]).diagonal());
+        expect(solution, [1.0, 1.0, 1.0].diagonal(0));
       });
 
       test('0', () {
-        final a = new Double2D([
+        final a = [
           [3.0, 2.0],
           [-6.0, 6.0]
-        ]);
-        final b = new Double2D([
+        ];
+        final b = [
           [7.0],
           [6.0]
-        ]);
+        ];
         final LU xlu = lu(a);
         Double2D solution = xlu.solve(b);
         Double2D product = a.matmul(solution);
@@ -379,16 +377,16 @@ void main() {
       });
 
       test('1', () {
-        var a = new Double2D([
+        var a = [
           [6.0, 3.0, 0.0],
           [2.0, 5.0, 1.0],
           [9.0, 8.0, 6.0]
-        ]);
-        var b = new Double2D([
+        ];
+        var b = [
           [60.0, 45.0],
           [49.0, 43.0],
           [141.0, 92.0]
-        ]);
+        ];
         final LU xlu = lu(a);
         Double2D solution = xlu.solve(b);
         Double2D product = a.matmul(solution);
@@ -397,19 +395,19 @@ void main() {
       });
 
       test('2', () {
-        final a = new Double2D([
+        final a = [
           [1.0, 4.0],
           [2.0, 5.0],
-        ]);
-        final b = a.matmul(new Double2D.aCol(<int>[5, 2]));
+        ];
+        final b = a.matmul([5, 2].toCol());
         final LU xlu = lu(a);
 
         expect(
             xlu.solve(b),
-            ints2([
+            [
               [5],
               [2]
-            ]));
+            ]);
       });
     });
   });

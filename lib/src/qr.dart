@@ -1,9 +1,9 @@
 library grizzly.linalg.qr;
 
 import 'dart:math';
-import 'package:grizzly_array/grizzly_array.dart';
+import 'package:grizzly/grizzly.dart';
 
-QR qr(Numeric2D matrix) => new QR.compute(matrix);
+QR qr(Num2D matrix) => QR.compute(matrix);
 
 /// The reduced QR-decomposition of a matrix.
 ///
@@ -42,13 +42,13 @@ class QR {
 
   Double2D solve(Double2D b) {
     if (b.numRows != qr.numRows)
-      throw new ArgumentError('Matrix row dimensions must agree.');
+      throw ArgumentError('Matrix row dimensions must agree.');
 
-    if (!isFullRank) throw new UnsupportedError('Matrix is rank deficient.');
+    if (!isFullRank) throw UnsupportedError('Matrix is rank deficient.');
 
     // Copy right hand side
     final int xCols = b.numCols;
-    final Double2D x = new Double2D(b);
+    final Double2D x = b.clone();
 
     // Compute Y = transpose(Q)*B
     for (int k = 0; k < qr.numCols; k++) {
@@ -80,13 +80,13 @@ class QR {
       }
     }
 
-    return x.slice(idx2D(0, 0), idx2D(qr.numCols, xCols));
+    return x.slice(Index2D(0, 0), Index2D(qr.numCols, xCols));
   }
 
   /// Creates a new [ReducedQRDecomposition] for the [matrix].
-  factory QR.compute(Numeric2D matrix) {
-    final qr = new Double2D.fromNums(matrix);
-    final rDiag = new Double1D.sized(matrix.numCols);
+  factory QR.compute(Num2D matrix) {
+    final qr = matrix.toDouble();
+    final rDiag = Double1D.filled(matrix.numCols, 0);
 
     final int numRows = matrix.numRows;
     final int numCols = matrix.numCols;
@@ -131,18 +131,17 @@ class QR {
       rDiag[k] = -nrm;
     }
 
-    return new QR(qr, rDiag);
+    return QR(qr, rDiag);
   }
 
   /// This [ReducedQRDecomposition]'s Householder matrix.
   ///
   /// Lower trapezoidal [Matrix] whose columns define the reflections.
   static Double2D householderMatrix(Double2D qr) {
-    final Index2D shape = qr.shape;
-    final values = new Double2D.shaped(shape);
+    final values = qr.shaped(0.0);
 
-    for (int i = 0; i < shape.row; i++) {
-      for (int j = 0; j < shape.col; j++) {
+    for (int i = 0; i < qr.numRows; i++) {
+      for (int j = 0; j < qr.numCols; j++) {
         if (i >= j) {
           values[i][j] = qr[i][j];
         } else {
@@ -156,8 +155,8 @@ class QR {
 
   /// Computes and returns the upper triangular factor R.
   static Double2D upperTriangularFactor(Double2D qr, Double1D rDiag) {
-    final int numCols = qr.shape.col;
-    final values = new Double2D.sized(qr.shape.col, qr.shape.col);
+    final int numCols = qr.numCols;
+    final values = Double.filled2D(qr.numCols, qr.numCols);
 
     for (int i = 0; i < numCols; i++) {
       for (int j = 0; j < numCols; j++) {
@@ -176,30 +175,28 @@ class QR {
 
   /// Computes and returns the orthogonal factor Q.
   static Double2D orthogonalFactor(Double2D qr) {
-    final Index2D shape = qr.shape;
+    final values = qr.shaped(0.0);
 
-    final values = new Double2D.shaped(qr.shape);
-
-    for (int k = shape.col - 1; k >= 0; k--) {
-      for (int i = 0; i < shape.row; i++) {
+    for (int k = qr.numCols - 1; k >= 0; k--) {
+      for (int i = 0; i < qr.numRows; i++) {
         values[i][k] = 0.0;
       }
 
-      if (k < shape.row) {
+      if (k < qr.numRows) {
         values[k][k] = 1.0;
       }
 
-      for (int j = k; j < shape.col; j++) {
-        if (k < shape.row && qr[k][k] != 0.0) {
+      for (int j = k; j < qr.numCols; j++) {
+        if (k < qr.numRows && qr[k][k] != 0.0) {
           double s = 0.0;
 
-          for (int i = k; i < shape.row; i++) {
+          for (int i = k; i < qr.numRows; i++) {
             s += qr[i][k] * values[i][j];
           }
 
           s = -s / qr[k][k];
 
-          for (int i = k; i < shape.row; i++) {
+          for (int i = k; i < qr.numRows; i++) {
             values[i][j] += s * qr[i][k];
           }
         }

@@ -1,14 +1,14 @@
-import 'package:grizzly_array/grizzly_array.dart';
+import 'package:grizzly/grizzly.dart';
 import 'package:grizzly_linalg/grizzly_linalg.dart';
 
 main() {
-  Double2D a = new Int2D([
+  Double2D a = [
     [1, 1],
     [1, 2],
     [1, 3],
     [1, 4],
     [1, 5],
-  ]).toDouble();
+  ].toDouble();
 
   final asvd = svd(a);
 
@@ -26,7 +26,7 @@ main() {
   print('A = U * S * V^T');
   print(u.matmulDiag(s).matmul(v.transpose));
 
-  Double2D b = new Double2D.aCol(a.col[0] + (a.col[1] * 5));
+  Double2D b = (a.cols[0].addition(a.cols[1] * 5)).toCol();
   print('B');
   print(b);
 

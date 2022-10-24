@@ -1,12 +1,12 @@
 library grizzly.linalg.lu;
 
-import 'package:grizzly_array/grizzly_array.dart';
+import 'package:grizzly/grizzly.dart';
 
-LU lu(Numeric2D matrix) => new LU.compute(matrix);
+LU lu(Double2D matrix) => LU.compute(matrix);
 
-Double2D solve(Numeric2D a, Numeric2D b) => new LU.compute(a).solve(b);
+Double2D solve(Num2D a, Num2D b) => LU.compute(a).solve(b);
 
-double det(Numeric2D a) => new LU.compute(a).determinant;
+double det(Num2D a) => LU.compute(a).determinant;
 
 /// The lower-upper factor decomposition of a [Matrix], with partial pivoting.
 ///
@@ -26,7 +26,7 @@ double det(Numeric2D a) => new LU.compute(a).determinant;
 /// [Matrix] is non-singular. Pivoting reduces the impact of rounding errors.
 class LU {
   /// LU decomposition values.
-  Double2DFix lu;
+  Double2D lu;
 
   /// The pivot vector.
   ///
@@ -42,7 +42,7 @@ class LU {
   ///     0 0 0 1
   ///     0 1 0 0
   ///
-  Int1DFix piv;
+  Int1D piv;
 
   /// The pivot sign.
   num pivotSign;
@@ -50,12 +50,12 @@ class LU {
   LU(this.lu, this.piv, this.pivotSign);
 
   /// Creates a new [LU] for the [matrix].
-  factory LU.compute(Numeric2D matrix) {
-    final lu = new Double2D.fromNums(matrix);
-    final int numRows = matrix.numRows;
-    final int numCols = matrix.numCols;
+  factory LU.compute(Num2DView matrix) {
+    final lu = matrix.toDouble();
+    final int numRows = lu.numRows;
+    final int numCols = lu.numCols;
     int pivotSign = 1;
-    final piv = new Int1D(new List<int>.generate(numRows, (i) => i));
+    final piv = List<int>.generate(numRows, (i) => i);
 
     // Outer loop.
     for (int j = 0; j < numCols; j++) {
@@ -95,7 +95,7 @@ class LU {
       }
     }
 
-    return new LU(lu, piv, pivotSign);
+    return LU(lu, piv, pivotSign);
   }
 
   /// Whether is not the decomposed [Matrix] is non-singular.
@@ -104,7 +104,7 @@ class LU {
   ///
   /// Throws an [UnsupportedError] if the decomposed [Matrix] is not square.
   bool get isSingular {
-    if (!lu.isSquare) throw new UnsupportedError('Matrix is not square.');
+    if (!lu.isSquare) throw UnsupportedError('Matrix is not square.');
 
     for (int j = 0; j < lu.numCols; j++) {
       if (lu[j][j] == 0.0) return true;
@@ -117,7 +117,7 @@ class LU {
   ///
   /// A [Matrix] with all zero's above the diagonal.
   Double2D get l {
-    final values = new Double2D.shapedLike(lu);
+    final values = lu.shaped<double>(0);
 
     for (int i = 0; i < lu.numRows; i++) {
       for (int j = 0; j < lu.numCols; j++) {
@@ -136,7 +136,7 @@ class LU {
   ///
   /// A [Matrix] with all zero's below the diagonal.
   Double2D get u {
-    final values = new Double2D.sized(lu.numCols, lu.numCols);
+    final values = Double.filled2D(lu.numCols, lu.numCols);
 
     for (int i = 0; i < lu.numCols; i++) {
       for (int j = 0; j < lu.numCols; j++) {
@@ -153,7 +153,7 @@ class LU {
   ///
   /// A permutation matrix.
   Double2D get p {
-    final values = new Double2D.sized(lu.numRows, lu.numRows);
+    final values = Double.filled2D(lu.numRows, lu.numRows);
 
     for (int i = 0; i < lu.numRows; i++) {
       for (int j = 0; j < lu.numRows; j++) {
@@ -170,7 +170,7 @@ class LU {
   ///
   /// Throws an [UnsupportedError] if the decomposed [Matrix] is not square.
   double get determinant {
-    if (!lu.isSquare) throw new UnsupportedError('Matrix must be square.');
+    if (!lu.isSquare) throw UnsupportedError('Matrix must be square.');
 
     double determinant = pivotSign.toDouble();
 
@@ -188,14 +188,14 @@ class LU {
   /// Throws an [UnsupportedError] if `A` is not square.
   ///
   /// Throws an [UnsupportedError] if `A` is singular (not invertible).
-  Double2D solve(Numeric2D b) {
+  Double2D solve(Num2D b) {
     if (b.numRows != lu.numRows)
-      throw new ArgumentError('Matrix row dimensions must agree.');
+      throw ArgumentError('Matrix row dimensions must agree.');
 
-    if (isSingular) throw new UnsupportedError('Matrix is singular.');
+    if (isSingular) throw UnsupportedError('Matrix is singular.');
 
     final xCols = b.numCols;
-    final x = new Double2D.sized(lu.numCols, xCols);
+    final x = Double.filled2D(lu.numCols, xCols);
 
     // Copy right hand side with pivoting
     {
