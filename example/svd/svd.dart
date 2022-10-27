@@ -26,7 +26,7 @@ main() {
   print('A = U * S * V^T');
   print(u.matmulDiag(s).matmul(v.transpose));
 
-  Double2D b = (a.cols[0].addition(a.cols[1] * 5)).toCol();
+  Double2D b = (a.cols[0].plus(a.cols[1] * 5)).toCol();
   print('B');
   print(b);
 

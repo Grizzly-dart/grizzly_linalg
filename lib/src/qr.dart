@@ -80,7 +80,7 @@ class QR {
       }
     }
 
-    return x.slice(Index2D(0, 0), Index2D(qr.numCols, xCols));
+    return x.cut(Index2D(0, 0), Index2D(qr.numCols, xCols));
   }
 
   /// Creates a new [ReducedQRDecomposition] for the [matrix].
@@ -156,7 +156,7 @@ class QR {
   /// Computes and returns the upper triangular factor R.
   static Double2D upperTriangularFactor(Double2D qr, Double1D rDiag) {
     final int numCols = qr.numCols;
-    final values = Double.filled2D(qr.numCols, qr.numCols);
+    final values = Double.sized(qr.numCols, qr.numCols);
 
     for (int i = 0; i < numCols; i++) {
       for (int j = 0; j < numCols; j++) {

@@ -136,7 +136,7 @@ class LU {
   ///
   /// A [Matrix] with all zero's below the diagonal.
   Double2D get u {
-    final values = Double.filled2D(lu.numCols, lu.numCols);
+    final values = Double.sized(lu.numCols, lu.numCols);
 
     for (int i = 0; i < lu.numCols; i++) {
       for (int j = 0; j < lu.numCols; j++) {
@@ -153,7 +153,7 @@ class LU {
   ///
   /// A permutation matrix.
   Double2D get p {
-    final values = Double.filled2D(lu.numRows, lu.numRows);
+    final values = Double.sized(lu.numRows, lu.numRows);
 
     for (int i = 0; i < lu.numRows; i++) {
       for (int j = 0; j < lu.numRows; j++) {
@@ -195,7 +195,7 @@ class LU {
     if (isSingular) throw UnsupportedError('Matrix is singular.');
 
     final xCols = b.numCols;
-    final x = Double.filled2D(lu.numCols, xCols);
+    final x = Double.sized(lu.numCols, xCols);
 
     // Copy right hand side with pivoting
     {

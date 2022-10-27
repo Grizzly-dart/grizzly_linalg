@@ -23,7 +23,7 @@ main() {
   print('A = Q * R');
   print(aqr.q.matmul(aqr.r));
 
-  Double2D b = (a.cols[0].addition(a.cols[1] * 5)).toCol();
+  Double2D b = (a.cols[0].plus(a.cols[1] * 5)).toCol();
   print('B');
   print(b);
 

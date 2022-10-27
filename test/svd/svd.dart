@@ -82,7 +82,7 @@ void main() {
           [1, 4],
           [1, 5],
         ];
-        Double2D b = (a.cols[0].addition(a.cols[1] * 5)).toCol();
+        Double2D b = (a.cols[0].plus(a.cols[1] * 5)).toCol();
 
         final asvd = svd(a);
         expect(asvd.solve(b), [

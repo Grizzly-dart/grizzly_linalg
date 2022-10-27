@@ -83,7 +83,7 @@ SVD svd(Num2D a) {
 
   Double2D u = a.toDouble();
   final s = Double1D.filled(n, 0);
-  final v = Double.filled2D(n, n);
+  final v = Double.sized(n, n);
 
   final rv1 = Double1D.filled(n, 0);
 
