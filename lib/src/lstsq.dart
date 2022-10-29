@@ -1,6 +1,7 @@
 library grizzly.linalg.lstsq;
 
 import 'package:grizzly/grizzly.dart';
+import 'package:grizzly_linalg/grizzly_linalg.dart';
 
 /// Return the least-squares solution to a linear matrix equation
 ///
@@ -13,29 +14,29 @@ List<double> lstsqBGD(List<List<num>> x, List<num> y,
         {double learningRate: 1e-4,
         int maxIterations: 200,
         List<double>? initParams}) =>
-    (BatchLeastSquareGradientDescent(
+    (LeastSquareBGD(
       x,
       y,
       learningRate: learningRate,
       maxIterations: maxIterations,
-      initParams: initParams,
+      initCoeff: initParams,
     )..learn())
-        .params;
+        .coeff;
 
 List<double> lstsqSGD(List<List<num>> x, List<num> y,
         {double learningRate: 1e-4,
         int maxIterations: 200,
         List<double>? initParams}) =>
-    (StochasticLeastSquareGradientDescent(
+    (LeastSquareSGD(
       x,
       y,
       learningRate: learningRate,
       maxIterations: maxIterations,
-      initParams: initParams,
+      initCoeff: initParams,
     )..learn())
-        .params;
+        .coeff;
 
-abstract class LeastSquareGradientDescent {
+abstract class LeastSquareGD {
   /// Learning rate used in gradient descent
   double get learningRate;
 
@@ -43,7 +44,7 @@ abstract class LeastSquareGradientDescent {
   int get maxIterations;
 
   /// (N, 1) parameters being estimated
-  List<double> get params;
+  List<double> get coeff;
 
   /// (M, N) exogenous or independent matrix
   List<List<num>> get x;
@@ -51,10 +52,12 @@ abstract class LeastSquareGradientDescent {
   /// (M, 1) endogenous of dependent matrix
   List<num> get y;
 
+  LeastSquareRegularizer? get regularizer;
+
   /// Finds the value of the hypothesis function given the current parameter
   /// vector θ ([params]) and a sample x ([row])
   // TODO normalize argument?
-  double predict(Iterable<num> row) => params.dot(row);
+  double predict(Iterable<num> row) => coeff.dot(row);
 
   /// Performs the learning
   void learn();
@@ -68,11 +71,12 @@ abstract class LeastSquareGradientDescent {
       final double error = y[r] - prediction;
       sumSquaredError += error * error;
     }
-    return sumSquaredError / (2 * x.numRows);
+    return sumSquaredError / (2 * x.numRows) +
+        (regularizer?.costFunction(coeff) ?? 0);
   }
 }
 
-class BatchLeastSquareGradientDescent extends LeastSquareGradientDescent {
+class LeastSquareBGD extends LeastSquareGD {
   /// Learning rate used in gradient descent
   final double learningRate;
 
@@ -80,7 +84,7 @@ class BatchLeastSquareGradientDescent extends LeastSquareGradientDescent {
   final int maxIterations;
 
   /// (N, 1) parameters being estimated
-  final List<double> params;
+  final List<double> coeff;
 
   /// (M, N) exogenous or independent matrix
   final List<List<num>> x;
@@ -88,39 +92,42 @@ class BatchLeastSquareGradientDescent extends LeastSquareGradientDescent {
   /// (M, 1) endogenous of dependent matrix
   final List<num> y;
 
-  BatchLeastSquareGradientDescent(this.x, this.y,
+  final LeastSquareRegularizer? regularizer;
+
+  LeastSquareBGD(this.x, this.y,
       {this.learningRate: 1e-4,
       this.maxIterations: 200,
-      List<double>? initParams})
-      : params = initParams == null
+      Num1DView? initCoeff,
+      this.regularizer})
+      : coeff = initCoeff == null
             ? List<double>.filled(x.numCols, 0)
-            : initParams {
+            : initCoeff.toDouble() {
     // Validate
     if (x.numRows != y.length) {
       throw Exception('x and y must have same number of samples!');
     }
-    if (x.numCols != params.length) {
+    if (x.numCols != coeff.length) {
       throw Exception('x and params must have same number of features!');
     }
   }
 
   /// Performs least-square estimation through batch gradient descent
   void learn() {
-    final theta = List<double>.filled(params.length, 0);
+    final theta = List<double>.filled(coeff.length, 0);
     for (int i = 0; i < maxIterations; i++) {
-      for (int j = 0; j < params.length; j++) {
-        theta[j] = params[j] + learningRate * dj(j);
+      for (int j = 0; j < coeff.length; j++) {
+        theta[j] = coeff[j] + learningRate * dj(j);
       }
 
       // Update params
-      for (int j = 0; j < params.length; j++) {
-        final double newThetaJ = theta[j];
+      for (int j = 0; j < coeff.length; j++) {
+        final double thetaJ = theta[j];
 
-        if (newThetaJ.isInfinite || newThetaJ.isNaN) {
+        if (thetaJ.isInfinite || thetaJ.isNaN) {
           throw Exception('Learning diverged!');
         }
 
-        params[j] = newThetaJ;
+        coeff[j] = thetaJ;
       }
     }
   }
@@ -135,35 +142,38 @@ class BatchLeastSquareGradientDescent extends LeastSquareGradientDescent {
       final double prediction = predict(x[r]);
       sum += (y[r] - prediction) * x[r][j];
     }
-    return sum / x.numCols;
+    return sum / x.numCols + (regularizer?.derivative(coeff[j]) ?? 0);
   }
 }
 
-class StochasticLeastSquareGradientDescent extends LeastSquareGradientDescent {
+class LeastSquareSGD extends LeastSquareGD {
   /// Learning rate used in gradient descent
   final double learningRate;
 
   /// Maximum iterations
   final int maxIterations;
 
-  final List<double> params;
+  final List<double> coeff;
 
   final List<List<num>> x;
 
   final List<num> y;
 
-  StochasticLeastSquareGradientDescent(this.x, this.y,
+  final LeastSquareRegularizer? regularizer;
+
+  LeastSquareSGD(this.x, this.y,
       {this.learningRate: 1e-4,
       this.maxIterations: 800,
-      List<double>? initParams})
-      : params = initParams == null
+      Num1DView? initCoeff,
+      this.regularizer})
+      : coeff = initCoeff == null
             ? List<double>.filled(x.numCols, 0)
-            : initParams {
+            : initCoeff.toDouble() {
     // Validate
     if (x.numRows != y.length) {
       throw Exception('x and y must have same number of samples!');
     }
-    if (x.numCols != params.length) {
+    if (x.numCols != coeff.length) {
       throw Exception('x and params must have same number of features!');
     }
   }
@@ -180,29 +190,63 @@ class StochasticLeastSquareGradientDescent extends LeastSquareGradientDescent {
   double dij(int i, int j) {
     final double prediction = predict(x[i]);
     final double gradient = (y[i] - prediction) * x[i][j];
-    return gradient;
+    return gradient + (regularizer?.derivative(coeff[j]) ?? 0);
   }
 
   /// Performs least-square estimation through stochastic gradient descent
   void learn() {
-    final theta = List<double>.filled(params.length, 0);
+    final theta = List<double>.filled(coeff.length, 0);
     for (int i = 0; i < maxIterations; i++) {
       for (int i = 0; i < x.numRows; i++) {
-        for (int j = 0; j < params.length; j++) {
-          theta[j] = params[j] + learningRate * dij(i, j);
+        for (int j = 0; j < coeff.length; j++) {
+          theta[j] = coeff[j] + learningRate * dij(i, j);
         }
 
         // Update params
-        for (int j = 0; j < params.length; j++) {
+        for (int j = 0; j < coeff.length; j++) {
           final double newThetaJ = theta[j];
 
           if (newThetaJ.isInfinite || newThetaJ.isNaN) {
             throw Exception('Learning diverged!');
           }
 
-          params[j] = newThetaJ;
+          coeff[j] = newThetaJ;
         }
       }
     }
   }
+}
+
+abstract class LeastSquareRegularizer {
+  String get name;
+
+  double costFunction(Num1DView coefficients);
+
+  double derivative(num coefficient);
+}
+
+class LassoRegularization implements LeastSquareRegularizer {
+  final String name = 'Lasso';
+
+  final double lambda;
+
+  const LassoRegularization(this.lambda);
+
+  double costFunction(Num1DView coefficients) =>
+      lambda * coefficients.abs().sum;
+
+  double derivative(num coefficient) => lambda * coefficient.sign;
+}
+
+class RidgeRegularization implements LeastSquareRegularizer {
+  final String name = 'Ridge';
+
+  final double lambda;
+
+  const RidgeRegularization(this.lambda);
+
+  double costFunction(Num1DView coefficients) =>
+      lambda * coefficients.pow(2).sum;
+
+  double derivative(num coefficient) => lambda * 2 * coefficient;
 }
