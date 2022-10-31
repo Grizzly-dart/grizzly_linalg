@@ -225,12 +225,12 @@ abstract class LeastSquareRegularizer {
   double derivative(num coefficient);
 }
 
-class LassoRegularization implements LeastSquareRegularizer {
+class LassoRegularizer implements LeastSquareRegularizer {
   final String name = 'Lasso';
 
   final double lambda;
 
-  const LassoRegularization(this.lambda);
+  const LassoRegularizer(this.lambda);
 
   double costFunction(Num1DView coefficients) =>
       lambda * coefficients.abs().sum;
@@ -238,12 +238,12 @@ class LassoRegularization implements LeastSquareRegularizer {
   double derivative(num coefficient) => lambda * coefficient.sign;
 }
 
-class RidgeRegularization implements LeastSquareRegularizer {
+class RidgeRegularizer implements LeastSquareRegularizer {
   final String name = 'Ridge';
 
   final double lambda;
 
-  const RidgeRegularization(this.lambda);
+  const RidgeRegularizer(this.lambda);
 
   double costFunction(Num1DView coefficients) =>
       lambda * coefficients.pow(2).sum;
